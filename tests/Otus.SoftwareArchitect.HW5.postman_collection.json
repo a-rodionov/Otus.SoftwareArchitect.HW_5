@@ -1,0 +1,1243 @@
+{
+	"info": {
+		"_postman_id": "dcbdb194-cbc8-429b-8606-5e537c1429e1",
+		"name": "Otus.SoftwareArchitect.HW5",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Register user 1",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "38c13505-647e-45f5-808c-e39dfaf2e989",
+						"exec": [
+							"pm.collectionVariables.set(\"user_1_username\", pm.variables.replaceIn(\"{{$randomUserName}}\"));",
+							"pm.collectionVariables.set(\"user_1_firstName\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));",
+							"pm.collectionVariables.set(\"user_1_lastName\", pm.variables.replaceIn(\"{{$randomLastName}}\"));",
+							"pm.collectionVariables.set(\"user_1_email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+							"pm.collectionVariables.set(\"user_1_phone\", pm.variables.replaceIn(\"{{$randomPhoneNumber}}\"));",
+							"pm.collectionVariables.set(\"user_1_password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));",
+							"pm.collectionVariables.set(\"user_1_edited_firstName\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));",
+							"pm.collectionVariables.set(\"user_1_edited_lastName\", pm.variables.replaceIn(\"{{$randomLastName}}\"));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "52f46452-a249-4ea0-937a-d50d9d710f19",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"user_1_id\", responseJSON[\"objectId\"])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_1_username}}\",\n    \"firstName\": \"{{user_1_firstName}}\",\n    \"lastName\": \"{{user_1_lastName}}\",\n    \"email\": \"{{user_1_email}}\",\n    \"phone\": \"{{user_1_phone}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Failed attempt to get user 1 info by unauthorized user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e76fafd2-20bb-492f-88af-3c08919cffa3",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user/{{user_1_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user",
+						"{{user_1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Failed attempt to edit user 1 by unauthorized user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "a99ceb02-d70d-44a0-ae02-e9381d9a539b",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ddd39975-2205-4898-9974-5315dd09e8ca",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"{{user_1_edited_firstName}}\",\n    \"lastName\": \"{{user_1_edited_lastName}}\",\n    \"phone\": \"{{user_1_phone}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user/{{user_1_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user",
+						"{{user_1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login keycloak admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ae650c2f-00e4-40a1-bad3-454ae18a9d7d",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"keycloak_access_token\", responseJSON[\"access_token\"])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "admin-cli",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://keycloak/auth/realms/master/protocol/openid-connect/token",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"realms",
+						"master",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create user 1 in keycloak",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b69d6480-91af-42ef-974d-b75283efb945",
+						"exec": [
+							"var location = pm.response.headers.get('Location')",
+							"var parts = location.split(\"/\")",
+							"pm.collectionVariables.set(\"user_1_id_keycloak\", parts[parts.length-1])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{keycloak_access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_1_username}}\",\n    \"enabled\": true,\n    \"emailVerified\": true,\n    \"firstName\": \"{{user_1_firstName}}\",\n    \"lastName\": \"{{user_1_lastName}}\",\n    \"email\": \"{{user_1_email}}\",\n    \"disableableCredentialTypes\": [],\n    \"requiredActions\": [],\n    \"notBefore\": 0,\n    \"access\": {\n        \"manageGroupMembership\": true,\n        \"view\": true,\n        \"mapRoles\": true,\n        \"impersonate\": true,\n        \"manage\": true\n    },\n    \"credentials\": [\n    \t{\n    \t\t\"type\":\"password\",\n    \t\t\"value\": \"{{user_1_password}}\",\n    \t\t\"temporary\": false\n    \t}\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://keycloak/auth/admin/realms/{{keycloak_realm_name}}/users",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"{{keycloak_realm_name}}",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user 1 in app",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "76652f28-1541-4fbc-980f-3964c202e31a",
+						"exec": [
+							"const $ = cheerio.load(pm.response.text());",
+							"const $form = $('form');",
+							"const action = $form.attr('action');",
+							"pm.collectionVariables.set(\"keycloakLoginURL\", action)",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/login",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user 1 in keycloak",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3fa17f4a-aba4-4669-8a7b-4e5bb762527e",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{user_1_username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{user_1_password}}",
+							"type": "text"
+						},
+						{
+							"key": "credentialId",
+							"value": "\"\"",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloakLoginURL}}",
+					"host": [
+						"{{keycloakLoginURL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e3b5208d-6b78-448c-b8a7-7368b2eafe9d",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"{{user_1_edited_firstName}}\",\n    \"lastName\": \"{{user_1_edited_lastName}}\",\n    \"phone\": \"{{user_1_phone}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user/{{user_1_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user",
+						"{{user_1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get user 1 info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "75f6afa2-ea11-4267-807b-168ec285ca2f",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user/{{user_1_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user",
+						"{{user_1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login keycloak admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a88afcf6-e640-4ed2-bbc6-b1f04ae4eda9",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"keycloak_access_token\", responseJSON[\"access_token\"])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "admin-cli",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://keycloak/auth/realms/master/protocol/openid-connect/token",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"realms",
+						"master",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout user 1 in keycloak",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb24ea62-bdb6-45aa-a895-54b983852053",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{keycloak_access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"realm\":\"{{keycloak_realm_name}}\",\"user\":\"{{user_1_id_keycloak}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://keycloak/auth/admin/realms/{{keycloak_realm_name}}/users/{{user_1_id_keycloak}}/logout",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"{{keycloak_realm_name}}",
+						"users",
+						"{{user_1_id_keycloak}}",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout in app and oauth2_proxy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5a35b147-0298-44ac-9f71-e905aec9c7c1",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/logout",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be850142-c9e3-4165-aed8-8d8566458b2f",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"user_2_id\", responseJSON[\"objectId\"])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "3f7c45c6-a0a0-41fb-9b3a-c6b0733c9e89",
+						"exec": [
+							"pm.collectionVariables.set(\"user_2_username\", pm.variables.replaceIn(\"{{$randomUserName}}\"));",
+							"pm.collectionVariables.set(\"user_2_firstName\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));",
+							"pm.collectionVariables.set(\"user_2_lastName\", pm.variables.replaceIn(\"{{$randomLastName}}\"));",
+							"pm.collectionVariables.set(\"user_2_email\", pm.variables.replaceIn(\"{{$randomEmail}}\"));",
+							"pm.collectionVariables.set(\"user_2_phone\", pm.variables.replaceIn(\"{{$randomPhoneNumber}}\"));",
+							"pm.collectionVariables.set(\"user_2_password\", pm.variables.replaceIn(\"{{$randomPassword}}\"));",
+							"pm.collectionVariables.set(\"user_2_edited_firstName\", pm.variables.replaceIn(\"{{$randomFirstName}}\"));",
+							"pm.collectionVariables.set(\"user_2_edited_lastName\", pm.variables.replaceIn(\"{{$randomLastName}}\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_2_username}}\",\n    \"firstName\": \"{{user_2_firstName}}\",\n    \"lastName\": \"{{user_2_lastName}}\",\n    \"email\": \"{{user_2_email}}\",\n    \"phone\": \"{{user_2_phone}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login keycloak admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "45b77d24-88bd-4daa-94d4-c78b6f7b0ed9",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"keycloak_access_token\", responseJSON[\"access_token\"])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "admin-cli",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://keycloak/auth/realms/master/protocol/openid-connect/token",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"realms",
+						"master",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create user 2 in keycloak",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "33052856-134e-47e2-8e7d-258aaecd4b5a",
+						"exec": [
+							"var location = pm.response.headers.get('Location')",
+							"var parts = location.split(\"/\")",
+							"pm.collectionVariables.set(\"user_2_id_keycloak\", parts[parts.length-1])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{keycloak_access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"{{user_2_username}}\",\n    \"enabled\": true,\n    \"emailVerified\": true,\n    \"firstName\": \"{{user_2_firstName}}\",\n    \"lastName\": \"{{user_2_lastName}}\",\n    \"email\": \"{{user_2_email}}\",\n    \"disableableCredentialTypes\": [],\n    \"requiredActions\": [],\n    \"notBefore\": 0,\n    \"access\": {\n        \"manageGroupMembership\": true,\n        \"view\": true,\n        \"mapRoles\": true,\n        \"impersonate\": true,\n        \"manage\": true\n    },\n    \"credentials\": [\n    \t{\n    \t\t\"type\":\"password\",\n    \t\t\"value\": \"{{user_2_password}}\",\n    \t\t\"temporary\": false\n    \t}\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://keycloak/auth/admin/realms/{{keycloak_realm_name}}/users",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"{{keycloak_realm_name}}",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user 2 in app",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3c62e014-b19e-4f13-9c39-6f8f1f6a87fb",
+						"exec": [
+							"const $ = cheerio.load(pm.response.text());",
+							"const $form = $('form');",
+							"const action = $form.attr('action');",
+							"pm.collectionVariables.set(\"keycloakLoginURL\", action)",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/login",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login user 2 in keycloak",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b3ce5479-b6e7-4083-8ca5-785c9f172036",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "{{user_2_username}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{user_2_password}}",
+							"type": "text"
+						},
+						{
+							"key": "credentialId",
+							"value": "\"\"",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{keycloakLoginURL}}",
+					"host": [
+						"{{keycloakLoginURL}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Failed attempt to get user 1 info by user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ce609017-d898-457c-b5c5-211c97a63446",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user/{{user_1_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user",
+						"{{user_1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Failed attempt to edit user 1 by user 2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "49fec11b-8035-40cd-bb98-92c73d2d63d0",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "c9e6ca23-cc8e-4d50-b727-09f55a86fe8a",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"{{user_2_firstName}}\",\n    \"lastName\": \"{{user_2_lastName}}\",\n    \"phone\": \"{{user_1_phone}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/user/{{user_1_id}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"user",
+						"{{user_1_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login keycloak admin",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6d80a1f5-4a29-4e5a-8e39-7e9b868c5d9f",
+						"exec": [
+							"var responseJSON = JSON.parse(responseBody)",
+							"pm.collectionVariables.set(\"keycloak_access_token\", responseJSON[\"access_token\"])",
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "admin-cli",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "admin",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://keycloak/auth/realms/master/protocol/openid-connect/token",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"realms",
+						"master",
+						"protocol",
+						"openid-connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout user 2 in keycloak",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8b2effba-3a1b-485e-8ed6-495f208eb70e",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{keycloak_access_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"realm\":\"{{keycloak_realm_name}}\",\"user\":\"{{user_2_id_keycloak}}\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://keycloak/auth/admin/realms/{{keycloak_realm_name}}/users/{{user_2_id_keycloak}}/logout",
+					"protocol": "https",
+					"host": [
+						"keycloak"
+					],
+					"path": [
+						"auth",
+						"admin",
+						"realms",
+						"{{keycloak_realm_name}}",
+						"users",
+						"{{user_2_id_keycloak}}",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout in app and oauth2_proxy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7a26eefa-e3c6-4fbe-ab95-0e89755ec1aa",
+						"exec": [
+							"console.log(pm.request.body)",
+							"console.log(responseBody)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{baseUrl}}/otusapp/rodionov_andrey/logout",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"otusapp",
+						"rodionov_andrey",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "62f3ddcd-3417-405d-a87d-f3d1c3f4a87c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "74d59740-9b34-48c9-a3bc-83801281bf54",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "1ad09b45-d4ee-4bcb-8815-ccf9d1a9541e",
+			"key": "keycloak_access_token",
+			"value": ""
+		},
+		{
+			"id": "24cd528b-9846-46bc-82aa-603603520efc",
+			"key": "keycloak_realm_name",
+			"value": "hw-ext-auth"
+		},
+		{
+			"id": "1ac1b22a-6420-4618-932a-afcfd5fa64e6",
+			"key": "keycloakLoginURL",
+			"value": ""
+		},
+		{
+			"id": "85188220-1ad3-4eb9-b688-69ad7204b42b",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		},
+		{
+			"id": "5f84a2b9-015d-46b0-b8d8-94faff690c6b",
+			"key": "user_1_username",
+			"value": ""
+		},
+		{
+			"id": "09e525ec-c8a9-442c-ba1f-0708f827dc8c",
+			"key": "user_1_firstName",
+			"value": ""
+		},
+		{
+			"id": "1eb29e13-486a-4ac6-94d2-81e6c3512187",
+			"key": "user_1_lastName",
+			"value": ""
+		},
+		{
+			"id": "962e2ee0-0da2-4a97-a5a5-068804bc9e55",
+			"key": "user_1_email",
+			"value": ""
+		},
+		{
+			"id": "1e1b5733-9747-4812-af46-262c2b529457",
+			"key": "user_1_phone",
+			"value": ""
+		},
+		{
+			"id": "eb75e2c0-5396-4d18-b290-46225fd97138",
+			"key": "user_1_id",
+			"value": "1"
+		},
+		{
+			"id": "04159cda-f935-4c6c-a1f9-9c0edc224f26",
+			"key": "user_1_password",
+			"value": ""
+		},
+		{
+			"id": "175217e0-c687-4611-b117-bfd9f9314227",
+			"key": "user_1_edited_firstName",
+			"value": ""
+		},
+		{
+			"id": "f21e9881-786f-456d-a05f-62f3577950bd",
+			"key": "user_1_edited_lastName",
+			"value": ""
+		},
+		{
+			"id": "f54c755d-77ad-4659-bc05-e8b234c6e6b5",
+			"key": "user_1_id_keycloak",
+			"value": ""
+		},
+		{
+			"id": "72ca6217-f451-4bfc-9bf0-e641d0b3f39b",
+			"key": "user_2_username",
+			"value": ""
+		},
+		{
+			"id": "8b00541e-0754-4e59-bf5a-93cac137b6cc",
+			"key": "user_2_firstName",
+			"value": ""
+		},
+		{
+			"id": "9c03d5fe-4de8-416a-90b3-0f8626891121",
+			"key": "user_2_lastName",
+			"value": ""
+		},
+		{
+			"id": "cffbae08-7f4a-4c8b-8a68-1faee09935bf",
+			"key": "user_2_email",
+			"value": ""
+		},
+		{
+			"id": "6de6bc1e-c6aa-4b6f-a63f-73b81156d268",
+			"key": "user_2_phone",
+			"value": ""
+		},
+		{
+			"id": "80df0055-aefd-4cba-9706-3faa9bee9cf7",
+			"key": "user_2_id",
+			"value": ""
+		},
+		{
+			"id": "313a8a9a-94f6-44fc-b52a-e257e9ce958c",
+			"key": "user_2_password",
+			"value": ""
+		},
+		{
+			"id": "1e783c57-05a4-4894-ae6f-58b477be27dc",
+			"key": "user_2_edited_firstName",
+			"value": ""
+		},
+		{
+			"id": "02f938f5-1c0d-4d01-950c-67c348c106e1",
+			"key": "user_2_edited_lastName",
+			"value": ""
+		},
+		{
+			"id": "0968e347-9a95-4af1-a03a-3b4fb2918852",
+			"key": "user_2_id_keycloak",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}

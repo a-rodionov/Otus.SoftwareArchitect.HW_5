@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "hw-app-chart.fullname" . }}
+  labels:
+    {{- include "hw-app-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hw-app-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+        checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
+      {{- end }}
+      labels:
+        {{- include "hw-app-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "hw-app-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-secret-application
+                  key: DATABASE_URI
+            - name: APP_NAME
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: APP_NAME
+            - name: APP_URL_SCHEME
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: APP_URL_SCHEME
+            - name: APP_URL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: APP_URL_HOST
+            - name: APP_URL_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: APP_URL_PATH
+            - name: AUTH_APP_URL_SCHEME
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: AUTH_APP_URL_SCHEME
+            - name: AUTH_APP_URL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: AUTH_APP_URL_HOST
+            - name: AUTH_APP_URL_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: AUTH_APP_URL_PATH
+            - name: AUTH_PUB_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: otus-sw-arch-hw-app-config
+                  key: AUTH_PUB_KEY
+          ports:
+            - name: web
+              containerPort: 8000
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: web
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /
+              port: web
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

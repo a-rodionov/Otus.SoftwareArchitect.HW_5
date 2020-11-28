@@ -1,0 +1,104 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "oauth2-proxy-chart.fullname" . }}
+  labels:
+    {{- include "oauth2-proxy-chart.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "oauth2-proxy-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "oauth2-proxy-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "oauth2-proxy-chart.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          args: ["--provider=keycloak",
+            "--ssl-insecure-skip-verify",
+            "--scope=openid",
+            "--standard-logging=true",
+            "--auth-logging=true",
+            "--request-logging=true",
+            "--email-domain=*",
+            "--upstream=file:///dev/null",
+            "--http-address=0.0.0.0:4180",
+            "--pass-user-headers=true",
+            "--pass-authorization-header=true",
+            "--pass-access-token=true",
+            "--set-xauthrequest=true",
+            "--set-authorization-header=true",
+            "--cookie-secure=false"]
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: OAUTH2_PROXY_CLIENT_ID
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-oauth2-proxy
+                  key: OAUTH2_PROXY_CLIENT_ID
+            - name: OAUTH2_PROXY_LOGIN_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-oauth2-proxy
+                  key: OAUTH2_PROXY_LOGIN_URL
+            - name: OAUTH2_PROXY_REDEEM_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-oauth2-proxy
+                  key: OAUTH2_PROXY_REDEEM_URL
+            - name: OAUTH2_PROXY_VALIDATE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-oauth2-proxy
+                  key: OAUTH2_PROXY_VALIDATE_URL
+            - name: OAUTH2_PROXY_REDIRECT_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-oauth2-proxy
+                  key: OAUTH2_PROXY_REDIRECT_URL
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-oauth2-proxy
+                  key: OAUTH2_PROXY_CLIENT_SECRET
+            - name: OAUTH2_PROXY_COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: secret-oauth2-proxy
+                  key: OAUTH2_PROXY_COOKIE_SECRET
+          ports:
+            - name: http
+              containerPort: 4180
+              protocol: TCP
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

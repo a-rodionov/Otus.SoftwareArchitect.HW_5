@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-oauth2-proxy
+data:
+  OAUTH2_PROXY_CLIENT_ID: {{ .Values.config.clientId }}
+  OAUTH2_PROXY_LOGIN_URL: {{ printf "%s/auth/realms/%s/protocol/openid-connect/auth" .Values.config.keycloakUrl .Values.config.realm }}
+  OAUTH2_PROXY_REDEEM_URL: {{ printf "%s/auth/realms/%s/protocol/openid-connect/token" .Values.config.keycloakUrl .Values.config.realm }}
+  OAUTH2_PROXY_VALIDATE_URL: {{ printf "%s/auth/realms/%s/protocol/openid-connect/userinfo" .Values.config.keycloakUrl .Values.config.realm }}
+  OAUTH2_PROXY_REDIRECT_URL: {{ "http://arch.homework/oauth2/callback" }}
